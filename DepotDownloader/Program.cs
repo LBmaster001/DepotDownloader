@@ -109,9 +109,9 @@ namespace DepotDownloader
                 return 1;
             }
 
-            var pubFile = GetParameter(args, "-pubfile", ContentDownloader.INVALID_MANIFEST_ID);
+            var pubFiles = GetParameterList<ulong>(args, "-pubfile");
             var ugcId = GetParameter(args, "-ugc", ContentDownloader.INVALID_MANIFEST_ID);
-            if (pubFile != ContentDownloader.INVALID_MANIFEST_ID)
+            if (pubFiles.Count() > 0)
             {
                 #region Pubfile Downloading
 
@@ -119,7 +119,10 @@ namespace DepotDownloader
                 {
                     try
                     {
-                        await ContentDownloader.DownloadPubfileAsync(appId, pubFile).ConfigureAwait(false);
+                        foreach (var pubFile in pubFiles)
+                        {
+                            await ContentDownloader.DownloadPubfileAsync(appId, pubFile).ConfigureAwait(false);
+                        }
                     }
                     catch (Exception ex) when (
                         ex is ContentDownloaderException
